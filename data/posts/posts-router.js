@@ -8,8 +8,6 @@ const db = require("../db.js");
 //Step 12- Bring in express router to create new router
 const router = express.Router();
 
-//Step 13- Bring in JSON middleware to make post & put work
-
 //handlers
 
 //GET all posts
@@ -24,10 +22,30 @@ router.get("/", (req, res) => {
     });
 });
 
+//GET post by id
+router.get("/:id", (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+  const { id } = req.params;
+  if (id) {
+    db.findById(id)
+      .then(post => res.status(200).json(post))
+      .catch(error =>
+        res
+          .status(500)
+          .json({ error: "The post information could not be retrieved." })
+      );
+  } else {
+    res
+      .status(404)
+      .json({ message: "The post with the specified ID does not exist." });
+  }
+});
+
 //POST
 router.post("/", (req, res) => {
   const postInfo = req.body;
-  console.log("Posts Info", postInfo);
+  //   console.log("Posts Info", postInfo);
 
   if (postInfo.title && postInfo.contents) {
     db.insert(postInfo)
