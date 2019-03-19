@@ -40,7 +40,7 @@ router.post("/", (req, res) => {
         });
       });
   } else {
-    res.status(500).json({
+    res.status(404).json({
       errorMessage: "Please provide title and contents for the post."
     });
   }

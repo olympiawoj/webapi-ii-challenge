@@ -9,6 +9,9 @@ const postsRouter = require("./data/posts/posts-router.js");
 //Step 2- Create an instance of a server powered by an express application
 const server = express();
 
+//Step 13- Bring in JSON middleware to make post & put work
+server.use(express.json());
+
 //Step 9- Server gives us access to the .use method to use the postsRouter
 server.use("/api/posts", postsRouter);
 
