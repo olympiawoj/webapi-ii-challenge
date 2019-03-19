@@ -18,6 +18,8 @@ router.get("/", (req, res) => {
 });
 
 //GET post by id
+//async await stops code, and if throws an error anywhere it goes to catch - you can throw your own error anywhere u want
+
 router.get("/:id", async (req, res) => {
   console.log(req.params);
   console.log(req.body);
@@ -25,7 +27,7 @@ router.get("/:id", async (req, res) => {
 
   try {
     const post = await db.findById(id);
-    //if post, returning a blank array so returning truthy
+    //if (post) would return a blank array so returning truthy
     if (post.length) {
       res.status(200).json(post);
     } else {
@@ -60,6 +62,23 @@ router.post("/", (req, res) => {
     res.status(404).json({
       errorMessage: "Please provide title and contents for the post."
     });
+  }
+});
+
+//DELETE by id
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const count = await db.remove(req.params.id);
+    if (count > 0) {
+      //aka if something has been removed
+      res.status(200).json({ message: "The post has been removed" });
+    } else {
+      res.status(404).json({ message: "The post could not be found" });
+    }
+  } catch (error) {
+    console.log(error); //log error to db
+    res.status(500).json({ message: "Error removing the hub" });
   }
 });
 
