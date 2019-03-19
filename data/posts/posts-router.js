@@ -1,17 +1,12 @@
 //Step 10- Inside posts-router.js,bring in express
-
 const express = require("express");
-
 //Step 11- Import our database
 const db = require("../db.js");
-
 //Step 12- Bring in express router to create new router
 const router = express.Router();
 
 //handlers
-
 //GET all posts
-
 router.get("/", (req, res) => {
   db.find()
     .then(posts => res.status(200).json(posts))
@@ -23,22 +18,26 @@ router.get("/", (req, res) => {
 });
 
 //GET post by id
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   console.log(req.params);
   console.log(req.body);
   const { id } = req.params;
-  if (id) {
-    db.findById(id)
-      .then(post => res.status(200).json(post))
-      .catch(error =>
-        res
-          .status(500)
-          .json({ error: "The post information could not be retrieved." })
-      );
-  } else {
+
+  try {
+    const post = await db.findById(id);
+    //if post, returning a blank array so returning truthy
+    if (post.length) {
+      res.status(200).json(post);
+    } else {
+      res
+        .status(404)
+        .json({ message: "The post with the specified ID does not exist." });
+    }
+  } catch (error) {
+    console.log(error);
     res
-      .status(404)
-      .json({ message: "The post with the specified ID does not exist." });
+      .status(500)
+      .json({ error: "The post information could not be retrieved." });
   }
 });
 
