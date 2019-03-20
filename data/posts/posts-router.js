@@ -82,6 +82,30 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+//PUT by id- updates the post w/ the specified id using data from the request body. Returns the modified document, NOT the original
+
+router.put("/:id", async (req, res) => {
+  if (req.body.title && req.body.contents) {
+    try {
+      const post = await db.update(req.params.id, req.body);
+      if (post.length) {
+        res.status(200).json(post);
+      } else {
+        res.status(204).json({ message: "The post could not be found" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Error updating the hub"
+      });
+    }
+  } else {
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post."
+    });
+  }
+});
+
 module.exports = router;
 
 // A Blog Post in the database has the following structure:
